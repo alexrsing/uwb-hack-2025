@@ -52,7 +52,7 @@ Creates an object of the database_accessor class and returns it.
 # Initialize the Firebase app with your service account key
 # Get the absolute path to the serviceAccountKey.json file
 base_dir = os.path.dirname(os.path.abspath(__file__))
-service_account_path = os.path.join(base_dir, '../../secrets/serviceAccountKey.json')
+service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
 
 cred = credentials.Certificate(service_account_path)
 firebase_admin.initialize_app(cred)
@@ -221,16 +221,16 @@ def verify_password(password_attempt, stored_hash) -> bool:
         return False
 """
 
-def verify_password(password_attempt: str, stored_password: str) -> bool:
+def verify_password(attempt: str, stored: str) -> bool:
     """
     Verifies that the password attempt matches the stored password
     No encryption is used.
-    :param password_attempt:
-    :param stored_password:
+    :param attempt:
+    :param stored:
     :return:
     """
 
-    return password_attempt == stored_password
+    return attempt == stored
 
 
 def user_exists(username: str) -> bool:
