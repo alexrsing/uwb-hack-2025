@@ -1,6 +1,14 @@
 import googlemaps
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
+
+cred = credentials.Certificate("/Users/glasteroid/Desktop/uwb-hack-2025/app/models/cert.json")
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 # gets coordinates of specified location 
 def convert_coordinates(location):
@@ -37,21 +45,18 @@ def get_place_details(place_id):
     
     # gets 'result' field from details dictionary representing parsed results from .place() function response, otherwise returns empty dictionary if not found
     return details.get('result', {})
-    
-# each function from api returns a dictionary, which is why we are indexing based on what results we want
-# ex, result['results'] and place['place_id']
-if __name__ == "__main__":
+
+def search_and_upload_places(city, prompt, radius):
     try:
-        city = input("City: ")
+        # city = input("City: ")
         lat, lng = convert_coordinates(city)
-        prompt = input("What would you like to search for: ")
-        results = get_places(50, lat, lng, prompt)
+        # prompt = input("What would you like to search for: ")
+        results = get_places(radius, lat, lng, prompt)
         
         if not results or 'results' not in results:
             print("Unable to fetch results.")
         else:
             for place in results['results']:
-                # Get detailed information
                 details = get_place_details(place['place_id'])
                 
                 print(f"\nName: {details.get('name', 'N/A')}")
@@ -60,7 +65,6 @@ if __name__ == "__main__":
                 print(f"Website: {details.get('website', 'N/A')}")
                 print(f"Rating: {details.get('rating', 'N/A')} ({details.get('user_ratings_total', 0)} reviews)")
                 
-                # Opening hours
                 if 'opening_hours' in details:
                     status = "Open Now" if details['opening_hours'].get('open_now') else "Closed"
                     print(f"Status: {status}")
@@ -71,5 +75,24 @@ if __name__ == "__main__":
                 
                 print("------")
                 
+                # Create data dictionary
+                data = {
+                    'name': details.get('name', 'N/A'),
+                    'address': details.get('formatted_address', 'N/A'),
+                    'phone': details.get('formatted_phone_number', 'N/A'),
+                    'website': details.get('website', 'N/A'),
+                    'rating': details.get('rating', 'N/A'),
+                    'user_ratings_total': details.get('user_ratings_total', 0),
+                    'opening_hours': details.get('opening_hours', {})
+                }
+                
+                # Upload to Firestore
+                db.collection('places').add(data)
+                
     except Exception as e:
         print(f"Error: {e}")
+    
+# each function from api returns a dictionary, which is why we are indexing based on what results we want
+# ex, result['results'] and place['place_id']
+if __name__ == "__main__":
+    search_and_upload_places()
