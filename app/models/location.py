@@ -22,7 +22,7 @@ def convert_coordinates(location):
     
 # finds a list of places based on radius, specific location coordinates, and keyword (user's interests)
 def get_places_with_age(radius_miles, specific_lat, specified_lng, keyword, age):
-    
+
     if age:
         # convert age to keyword for appending
         age_keyword = f"{age} years old"
@@ -72,12 +72,6 @@ def search_and_upload_places(city, interests, radius, age):
             else:
                 for place in results['results']:
                     details = get_place_details(place['place_id'])
-                    
-                    print(f"\nName: {details.get('name', 'N/A')}")
-                    print(f"Address: {details.get('formatted_address', 'N/A')}")
-                    print(f"Phone: {details.get('formatted_phone_number', 'N/A')}")
-                    print(f"Website: {details.get('website', 'N/A')}")
-                    print(f"Rating: {details.get('rating', 'N/A')} ({details.get('user_ratings_total', 0)} reviews)")
                     
                     if 'opening_hours' in details:
                         status = "Open Now" if details['opening_hours'].get('open_now') else "Closed"
