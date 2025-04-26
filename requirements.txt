@@ -1,10 +1,6 @@
 # Web Framework
 streamlit>=1.25.0
 
-# API Integration
-openai>=1.0.0
-python-dotenv>=1.0.0
-
 # Data Handling
 pandas>=2.0.0
 numpy>=1.24.0
@@ -12,3 +8,11 @@ numpy>=1.24.0
 # Testing
 pytest>=7.4.0
 
+# firebase_admin
+firebase-admin>=6.0.0
+
+#bcrypt
+bcrypt>=4.0.1
+
+#googlemaps API
+googlemaps>=4.10.0
