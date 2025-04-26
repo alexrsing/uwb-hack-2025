@@ -13,3 +13,6 @@ firebase-admin>=6.0.0
 
 #bcrypt
 bcrypt>=4.0.1
+
+#googlemaps API
+googlemaps>=4.10.0
