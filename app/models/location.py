@@ -2,10 +2,13 @@ import googlemaps
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import os
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
 
-cred = credentials.Certificate("/Users/glasteroid/Desktop/uwb-hack-2025/.secrets/cert.json")
+base_dir = os.path.dirname(os.path.abspath(__file__))
+service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
+cred = credentials.Certificate(service_account_path)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
