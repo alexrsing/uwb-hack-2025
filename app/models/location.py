@@ -46,12 +46,12 @@ def get_place_details(place_id):
     # gets 'result' field from details dictionary representing parsed results from .place() function response, otherwise returns empty dictionary if not found
     return details.get('result', {})
 
-def search_and_upload_places(city, prompt):
+def search_and_upload_places(city, prompt, radius):
     try:
         # city = input("City: ")
         lat, lng = convert_coordinates(city)
         # prompt = input("What would you like to search for: ")
-        results = get_places(50, lat, lng, prompt)
+        results = get_places(radius, lat, lng, prompt)
         
         if not results or 'results' not in results:
             print("Unable to fetch results.")
