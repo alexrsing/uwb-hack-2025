@@ -10,6 +10,17 @@ class Activity:
         self.rating = rating
         self.user_ratings_total = user_ratings_total
         self.opening_hours = opening_hours
+        
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'address': self.address,
+            'phone': self.phone,
+            'website': self.website,
+            'rating': self.rating,
+            'user_ratings_total': self.user_ratings_total,
+            'opening_hours': self.opening_hours
+        }
 
     def get_name(self):
         return self.name
