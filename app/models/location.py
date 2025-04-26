@@ -5,6 +5,7 @@ from firebase_admin import firestore
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
 
+
 cred = credentials.Certificate("/Users/glasteroid/Desktop/uwb-hack-2025/app/models/cert.json")
 firebase_admin.initialize_app(cred)
 
