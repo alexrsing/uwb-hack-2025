@@ -5,7 +5,7 @@ from firebase_admin import firestore
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
 
-cred = credentials.Certificate("/Users/glasteroid/Desktop/uwb-hack-2025/app/models/cert.json")
+cred = credentials.Certificate("/Users/glasteroid/Desktop/uwb-hack-2025/.secrets/cert.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -45,6 +45,10 @@ def get_place_details(place_id):
     
     # gets 'result' field from details dictionary representing parsed results from .place() function response, otherwise returns empty dictionary if not found
     return details.get('result', {})
+
+def get_prompt(age, gender):
+    base = [age, gender]
+    
 
 def search_and_upload_places(city, prompt, radius):
     try:
