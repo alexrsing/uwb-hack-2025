@@ -58,9 +58,7 @@ service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.
 
 cred = credentials.Certificate(service_account_path)
 firebase_admin.initialize_app(cred)
-
 db = firestore.client()
-
 
 def get_user(username: str):
     """
@@ -93,7 +91,6 @@ def get_user(username: str):
 
     return user
 
-
 # Update a user by username
 def update_user(username: str, updated_data: dict) -> None:
     """
@@ -119,7 +116,7 @@ def create_user(user: User):
     """
     Creates a new user object in the database.
     Encrypts the password before storing it.
-    If the username already exists, return an error message.
+    If the username already exists, return None
     :param user: The user object to create.
     """
     # Check if username already exists
@@ -194,7 +191,6 @@ def login(username: str, password: str):
     print("Invalid username or password")
 
     return None
-
 
 # Hash a password
 def hash_password(password):
