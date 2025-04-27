@@ -1,11 +1,16 @@
+import os
 import firebase_admin
 from firebase_admin import credentials, firestore
 
 
 class FirestorePersonalData:
     def __init__(self):
+        
         if not firebase_admin._apps:
-            cred = credentials.Certificate('./.secrets/serviceAccountKey.json')
+            # DO NOT CHANGE - SECURITY REASONS
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()

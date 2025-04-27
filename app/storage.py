@@ -6,15 +6,17 @@ from firebase_admin import firestore
 
 class FireStore():
     def __init__(self) -> None:
-        # base_dir = os.path.dirname(os.path.abspath(__file__))
-        # service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
+    
+        # DO NOT CHANGE - SECURITY REASONS
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        service_account_path = os.path.join(base_dir, '../.secrets/serviceAccountKey.json')
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
@@ -95,15 +97,29 @@ class FireStore():
                 'age': age,
                 'gender': gender
             }
-            self.db.collection('user_data').add(data)
+            self.db.collection('users').add(data)
             return True
         except Exception as e:
             print(f"Error saving data: {e}")
             return False
+        
+    def get_user_data(self, username : str):
+        """ Sorts through users in the database and returns the user with the given username"""
+        db_list = self.db.collection('users').stream()
+        for doc in db_list:
+            data = doc.to_dict()
+            if data.get('username') == username:
+                doc_id = doc.id
+                """Get dict of data from doc_id"""
+                data = self.db.collection('users').document(doc_id).get().to_dict()
+
+                interests = data.get('interests')
+                return data
+        return None, None
 
     def get_first_user_data(self):
         try:
-            docs = self.db.collection('user_data').limit(1).stream()
+            docs = self.db.collection('users').limit(1).stream()
             for doc in docs:
                 data = doc.to_dict()
                 return doc.id, data

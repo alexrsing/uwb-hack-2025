@@ -1,78 +1,51 @@
 import streamlit as st
-import time
-from pages.storage import FireStore  # make sure your filename matches
+from storage import FireStore
 
-# Initialize Firestore
 @st.cache_resource
 def get_db():
+    """Establish a connection with Firestore."""
     return FireStore()
 
-# Set up background style
-st.markdown("""
-<style>
-    .stExpander {
-        background: #f8f9fa;
-        border-radius: 8px;
-        margin: 10px 0;
-    }
-    .stMarkdown {
-        color: #4a4a4a;
-    }
-    .sidebar .sidebar-content {
-            display: none;
-    }
-</style>
-""", unsafe_allow_html=True)
+def main():
+    db = get_db()
+    st.title("Personal Information")
+    st.write("Please fill out your profile details below")
 
-# Set Title Page
-st.title("Personal Information Form")
-st.write("Please fill in your details below:")
+    # Create input fields with appropriate input types
+    # Name input - text box for string
+    name = st.text_input("Name")
 
-# About this form
-with st.expander("About This Form - Click to Expand", expanded=False):
-    st.write("""
-    - This form collects basic personal information
-    - Fields marked with * are required
-    - Your data will be stored securely
-    - For questions, contact us
-    """)
+    # Location input - text box for string
+    location = st.text_input("Location")
 
-# Create form style UI
-with st.form("personal_form"):
-    first_name = st.text_input("First Name*")
-    last_name = st.text_input("Last Name*")
-    city = st.text_input("City*")
-    age = st.number_input("Age*", min_value=1, max_value=110)
-    gender = st.selectbox("Gender", ["Prefer not to say", "Male", "Female", "Non-binary"])
+    # Age input - dropdown with integers 0-100
+    age = st.selectbox("Age", options=list(range(101)), index=0)
 
-    submitted = st.form_submit_button("Submit")
+    # Gender input - radio buttons for multiple choice
+    gender_options = ["Male", "Female", "Rather not say"]
+    gender : str = st.radio("Gender", options=gender_options, index=0)
 
-    if submitted:
-        if not all([first_name, last_name, city, age]):
-            st.error("Please fill in all required fields!")
-        else:
-            db = get_db()
-            with st.spinner("Saving your data... Please wait..."):
-                time.sleep(2)
-                success = db.save_user_data(first_name, last_name, city, int(age), gender)
-                if success:
-                    st.success("Thank you for your submission! Your data has been saved.")
-                else:
-                    st.error("An error occurred while saving your data.")
+    data : dict = {'name' : name, 'location': location, 'age': age, 'gender': gender}
 
-# Privacy Policy
-with st.expander("Privacy Policy - Click to Expand", expanded=False):
-    st.write("""
-    **How we use your data:**
-    - For internal analytics only
-    - Never shared with third parties
-    - Stored securely on our servers
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Save Information"):
+            # Validate that required fields are filled
+            if not name or not location:
+                st.error("Please fill out all required fields.")
+            else:
+                # Display success message
+                st.success(f"Profile saved for {name}!")
 
-    **Your rights:**
-    - You can request deletion anytime
-    - Contact us for inquiries
-    """)
+                # Update database
+                username = st.session_state.username
+                db.update(username, data)
+    with col2:
+        if st.button("Exit"):
+            st.write("Exiting")
+            st.stop()
 
-# Footer
-st.markdown("---")
-st.caption("Â© 2025 (APPNAME) | All rights reserved")
+
+# Example usage when running the file directly
+if __name__ == "__main__":
+    main()
