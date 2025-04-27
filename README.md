@@ -19,7 +19,7 @@ CommunaLink is a socialization application that connects users with places and a
 
 Run the main application:
 ```
-python main.py
+streamlit run app/app.py
 ```
 
 Follow the prompts to:
@@ -31,6 +31,6 @@ Follow the prompts to:
 
 ## Dependencies
 
-- Python 3.8+
+- Python 3.13.x
 - Google Maps API
 - Required Python packages (see requirements.txt)
