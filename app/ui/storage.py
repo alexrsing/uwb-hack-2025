@@ -10,6 +10,11 @@ class FireStore():
         if not firebase_admin._apps:
             cred = credentials.Certificate('app/ui/key.json')
             firebase_admin.initialize_app(cred)
+        else:
+            firebase_admin.delete_app(firebase_admin.get_app())
+            cred = credentials.Certificate('app/ui/key.json')
+            firebase_admin.initialize_app(cred)
+
         self.db = firestore.client()
 
 
@@ -24,11 +29,34 @@ class FireStore():
 
         return 0
     
-    def check_user(self, user: str) -> bool:
-        doc_ref = self.db.collection('users').document(user)
-        if(doc_ref.get().exists):
+    def check_user(self, user: str, pswrd: str = None) -> bool:
+        if(pswrd == None):
+            doc_ref = self.db.collection('users').document(user)
+            doc = doc_ref.get()
+            return doc.exists
+        else:
+            doc_ref = self.db.collection('users').document(user)
+            doc = doc_ref.get()
+            if(doc.exists):
+                password = doc.to_dict().get('password')
+                if password == pswrd:
+                    return True
+            return False
+
+
+    def change_password(self, user: str, password: str) -> bool:
+        try:
+            doc_ref = self.db.collection('users').document(user)
+            data = {
+                'username': user,
+                'password': password
+            }
+            doc_ref.update(data)
             return True
-        return False
+        except Exception:
+            return False
+            
+
     
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
