@@ -1,12 +1,13 @@
 import streamlit as st
 import time
-from models.user import User
+from storage import FireStore  # make sure your filename matches
 
-# Initialize session state to store user data
-if 'user' not in st.session_state:
-    st.session_state.user = User("default_username", "default_password")
+# Initialize Firestore
+@st.cache_resource
+def get_db():
+    return FireStore()
 
-# Set up background
+# Set up background style
 st.markdown("""
 <style>
     .stExpander {
@@ -16,6 +17,9 @@ st.markdown("""
     }
     .stMarkdown {
         color: #4a4a4a;
+    }
+    .sidebar .sidebar-content {
+            display: none;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -35,49 +39,34 @@ with st.expander("About This Form - Click to Expand", expanded=False):
 
 # Create form style UI
 with st.form("personal_form"):
-    # Set up input variables
-    name = st.text_input("Full Name*")
-    location = st.text_input("City*")
+    first_name = st.text_input("First Name*")
+    last_name = st.text_input("Last Name*")
+    city = st.text_input("City*")
     age = st.number_input("Age*", min_value=1, max_value=110)
     gender = st.selectbox("Gender", ["Prefer not to say", "Male", "Female", "Non-binary"])
 
-    # Submit button
     submitted = st.form_submit_button("Submit")
 
     if submitted:
-        # Check if all required fields are filled
-        if not all([name, location, age]):
+        if not all([first_name, last_name, city, age]):
             st.error("Please fill in all required fields!")
         else:
-            # Show spinner while processing
+            db = get_db()
             with st.spinner("Saving your data... Please wait..."):
-                try:
-                    time.sleep(1)  # Simulate processing time
-
-                    # Update user data in session state
-                    st.session_state.user.set_name(name)
-                    st.session_state.user.set_location(location)
-                    st.session_state.user.set_age(age)
-                    st.session_state.user.set_gender(gender)
-
-                    # Success message
+                time.sleep(2)
+                success = db.save_user_data(first_name, last_name, city, int(age), gender)
+                if success:
                     st.success("Thank you for your submission! Your data has been saved.")
+                else:
+                    st.error("An error occurred while saving your data.")
 
-                    # Display the collected data
-                    st.subheader("Your Information:")
-                    st.text(str(st.session_state.user))
-
-                except Exception as e:
-                    # Error message
-                    st.error(f"An error occurred: {str(e)}")
-
-# Expander for privacy policy
+# Privacy Policy
 with st.expander("Privacy Policy - Click to Expand", expanded=False):
     st.write("""
     **How we use your data:**
     - For internal analytics only
     - Never shared with third parties
-    - Stored securely in your session
+    - Stored securely on our servers
 
     **Your rights:**
     - You can request deletion anytime
@@ -86,4 +75,4 @@ with st.expander("Privacy Policy - Click to Expand", expanded=False):
 
 # Footer
 st.markdown("---")
-st.caption("Â© 2025 Personal Info App | All rights reserved")
+st.caption("Â© 2025 (APPNAME) | All rights reserved")
