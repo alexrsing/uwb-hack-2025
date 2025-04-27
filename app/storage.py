@@ -30,6 +30,8 @@ class FireStore():
         return 0
     
     def check_user(self, user: str, pswrd: str = None) -> bool:
+        user = user.strip("/")  # Remove any trailing slashes if present
+        
         if(pswrd == None):
             doc_ref = self.db.collection('users').document(user)
             doc = doc_ref.get()
