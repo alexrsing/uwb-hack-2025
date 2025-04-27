@@ -1,8 +1,21 @@
 import streamlit as st
 
-st.set_page_config(initial_sidebar_state="expanded")
-
 def main():
+    # Remove the sidebar with custom CSS
+    st.set_page_config(initial_sidebar_state="collapsed")
+
+    st.markdown(
+        """
+    <style>
+        [data-testid="collapsedControl"] {
+            display: none
+        }
+    </style>
+    """,
+        unsafe_allow_html=True,
+    )
+    
+    # Page content
     st.title("Welcome to CommunaLink!")
     st.write("This is the homepage. Click the button below to login, or if you are a new user, create an account.")
     
