@@ -10,11 +10,11 @@ class FireStore():
         # service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate('/Users/glasteroid/Desktop/uwb-hack-2025/.secrets/serviceAccountKey.json')
+            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate('/Users/glasteroid/Desktop/uwb-hack-2025/.secrets/serviceAccountKey.json')
+            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
@@ -67,22 +67,22 @@ class FireStore():
         if(len(pswrd) >= 8):
             strength += 1
         else:
-            msgs.append("Password must be a minimum of 8 characters, ")
+            msgs.append("Password must be a minimum of 8 characters ")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
-            msgs.append("Password must contain at least one uppercase letter, ")
+            msgs.append("Password must contain at least one uppercase letter ")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
-            msgs.append("Pasword must contain at least one number, ")
+            msgs.append("Pasword must contain at least one number ")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
-            msgs.append("Password must contain at least one special character (!,@,#).etc, ")
+            msgs.append("Password must contain at least one special character (!,@,#).etc ")
 
         return strength, msgs
     
