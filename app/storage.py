@@ -7,7 +7,7 @@ from firebase_admin import firestore
 class FireStore():
     def __init__(self) -> None:
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
+        service_account_path = os.path.join(base_dir, '../.secrets/serviceAccountKey.json')
 
         if not firebase_admin._apps:
             cred = credentials.Certificate(service_account_path)
@@ -61,6 +61,20 @@ class FireStore():
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, user)
+    
+    def get_user_data(self, username : str):
+        """ Sorts through users in the database and returns the user with the given username"""
+        db_list = self.db.collection('users').stream()
+        for doc in db_list:
+            data = doc.to_dict()
+            if data.get('username') == username:
+                doc_id = doc.id
+                """Get dict of data from doc_id"""
+                data = self.db.collection('users').document(doc_id).get().to_dict()
+
+                """ Return dict of data """
+                return data
+        return None
 
     def password_strength(self, pswrd: str):
         strength = 0
