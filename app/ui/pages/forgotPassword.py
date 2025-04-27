@@ -1,5 +1,5 @@
 import streamlit as st
-from storage import FireStore
+from app.pages.storage import FireStore
 
 @st.cache_resource
 def get_db():
