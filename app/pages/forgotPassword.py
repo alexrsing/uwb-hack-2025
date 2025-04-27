@@ -11,8 +11,9 @@ def main():
     st.header("Reset your password: ")
     if 'reset_state' not in st.session_state:
         st.session_state.reset_state = 1
-
-    global_user = ""
+        
+    if 'global_user' not in st.session_state:
+        st.session_state.global_user = ""
 
     if st.session_state.reset_state == 1:
         with st.form('reset_password_form'):
@@ -23,7 +24,7 @@ def main():
                 st.error("Please enter a username")
             exists = db.check_user(username)
             if(exists):
-                global_user = username
+                st.session_state.global_user = username
                 st.session_state.reset_state = 2
                 st.rerun()
             else:
@@ -43,7 +44,7 @@ def main():
             st.session_state.password_input = st.session_state.pwd_key
 
         with st.form('new_password_form'):
-            st.subheader(f'Reseting password for: {global_user}')
+            st.subheader(f'Reseting password for: {st.session_state.global_user}')
             password = st.text_input("Enter new password:", type='password', placeholder='example@123', key = 'pwd_key', on_change=update_password(), value=st.session_state.pwd_key)
             if st.session_state.password_input:
                 strength, msgs = db.password_strength(password)
