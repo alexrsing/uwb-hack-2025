@@ -57,7 +57,7 @@ def main():
                 st.markdown(f"""
                     <div style="
                     background: {colors[strength]};
-                    color: black;
+                    color: gray;
                     padding: 0.2rem 0.5rem;
                     border-radius: 0.3rem;
                     display: inline-block;
