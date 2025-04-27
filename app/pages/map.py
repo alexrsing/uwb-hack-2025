@@ -7,7 +7,9 @@ from folium import Popup
 from storage import FireStore
 
 if 'global_user' not in st.session_state:
-        st.session_state.global_user = ""
+    st.session_state.global_user = ""
+
+global_user = st.session_state.get("global_user", "User")
 
 class Map:
     def __init__(self):
@@ -42,7 +44,7 @@ def main():
     
     personal_map = Map()
     
-    user_data = db.get_user_data("kenny")
+    user_data = db.get_user_data(username=global_user)
 
     interests_list : list = user_data.get('interests')
     

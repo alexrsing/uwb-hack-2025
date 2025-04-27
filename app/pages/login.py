@@ -14,7 +14,6 @@ def main():
 
     db = get_db()
 
-   
     if st.session_state.logged_in:
         st.success("Welcome back!")
     else:

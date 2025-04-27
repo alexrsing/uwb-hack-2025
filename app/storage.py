@@ -7,11 +7,7 @@ from firebase_admin import firestore
 class FireStore():
     def __init__(self) -> None:
         base_dir = os.path.dirname(os.path.abspath(__file__))
-<<<<<<< HEAD
         service_account_path = os.path.join(base_dir, '../.secrets/serviceAccountKey.json')
-=======
-        service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
->>>>>>> 7fd3ea3af45b1afe873b042e70687be310087042
 
         if not firebase_admin._apps:
             cred = credentials.Certificate(service_account_path)
