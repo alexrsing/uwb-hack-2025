@@ -23,16 +23,17 @@ class FireStore():
 
     def add_user(self, user : str, pswrd : str) -> int:
         data = {
-            'username': '{}'.format(user),
-            'password': '{}'.format(pswrd)
+            'username': user,
+            'password': pswrd
         }
 
-        doc_ref = self.db.collection('users').document(user)
-        doc_ref.set(data)
+        doc_ref = self.db.collection('users').document(user).set(data)
 
         return 0
     
     def check_user(self, user: str, pswrd: str = None) -> bool:
+        user = user.strip("/")  # Remove any trailing slashes if present
+        
         if(pswrd == None):
             doc_ref = self.db.collection('users').document(user)
             doc = doc_ref.get()
@@ -55,7 +56,8 @@ class FireStore():
             }
             doc_ref.update(data)
             return True
-        except Exception:
+        except Exception as e:
+            print('Exception: ', {e})
             return False
 
     def valid_email(self, user: str) -> bool:
@@ -69,22 +71,22 @@ class FireStore():
         if(len(pswrd) >= 8):
             strength += 1
         else:
-            msgs.append("Password must be a minimum of 8 characters")
+            msgs.append("Password must be a minimum of 8 characters, ")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
-            msgs.append("Password must contain at least one uppercase letter")
+            msgs.append("Password must contain at least one uppercase letter, ")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
-            msgs.append("Pasword must contain at least one number")
+            msgs.append("Pasword must contain at least one number, ")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
-            msgs.append("Password must contain at least one special character (!,@,#).etc")
+            msgs.append("Password must contain at least one special character (!,@,#).etc, ")
 
         return strength, msgs
     

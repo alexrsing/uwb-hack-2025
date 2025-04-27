@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 from storage import FireStore  # make sure your filename matches
+from app.storage import FireStore  # make sure your filename matches
 
 # Initialize Firestore
 @st.cache_resource

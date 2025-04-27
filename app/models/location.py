@@ -16,6 +16,9 @@ db = firestore.client()
 
 # gets coordinates of specified location 
 def convert_coordinates(location):
+    if not location:
+        return [0, 0]
+    
     geocode_result = gmaps.geocode(location)
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
@@ -61,8 +64,9 @@ def get_place_details(place_id):
 # interests is a list containing a list of the user's separate interests that will be looped over
 def search_and_upload_places(city, interests, radius, age):
     try:
-        # city = input("City: ")
-        lat, lng = convert_coordinates(city)
+        if convert_coordinates(city) == [0, 0]:
+            {}
+            
         # prompt = input("What would you like to search for: ")
         for interest in interests:
             results = get_places_with_age(radius, lat, lng, interest, age=age)
