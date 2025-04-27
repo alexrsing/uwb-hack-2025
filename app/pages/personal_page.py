@@ -63,7 +63,7 @@ with st.form("personal_form"):
                 success = db.save_user_data(global_user, first_name, last_name, city, int(age), gender)
                 if success:
                     st.success("Thank you for your submission! Your data has been saved.")
-                    st.switch_page('pages/dashboard.py')
+                    st.switch_page('pages/interest_page.py')
                 else:
                     st.error("An error occurred while saving your data.")
 

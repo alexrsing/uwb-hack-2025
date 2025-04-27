@@ -8,13 +8,9 @@ import streamlit as st
 class FireStore():
     def __init__(self) -> None:
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
+        service_account_path = os.path.join(base_dir, '../.secrets/serviceAccountKey.json')
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate(service_account_path)
-            firebase_admin.initialize_app(cred)
-        else:
-            firebase_admin.delete_app(firebase_admin.get_app())
             cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 
@@ -87,4 +83,56 @@ class FireStore():
             msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
+    
+    def save_user_data(self, username: str, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
+        try:
+            data = {
+                'username': username,
+                'first_name': first_name,
+                'last_name': last_name,
+                'city': city,
+                'age': age,
+                'gender': gender,
+                'interests': [""]
+            }
+            
+            self.db.collection('user_data').add(data)
+            return True
+        except Exception as e:
+            print(f"Error saving data: {e}")
+            return False
+
+    def get_first_user_data(self):
+        try:
+            docs = self.db.collection('user_data').limit(1).stream()
+            for doc in docs:
+                data = doc.to_dict()
+                return doc.id, data
+            return None, None
+        except Exception as e:
+            print(f"Error getting data: {e}")
+            return None, None
+
+    def update_user_data(self, doc_id: str, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
+        try:
+            data = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'city': city,
+                'age': age,
+                'gender': gender
+            }
+            self.db.collection('user_data').document(doc_id).update(data)
+            return True
+        except Exception as e:
+            print(f"Error updating data: {e}")
+            return False
+    def update_interests(self, username: str, user_data) -> bool:
+        if username:
+            doc_ref = self.db.collection('user_data').document(username)
+            doc_ref.update({'interests': user_data})
+            return True
+        return False
+        
+    
 

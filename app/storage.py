@@ -3,6 +3,7 @@ import re
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import streamlit as st
 
 class FireStore():
     def __init__(self) -> None:
@@ -12,26 +13,21 @@ class FireStore():
         if not firebase_admin._apps:
             cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
-        else:
-            firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate(service_account_path)
-            firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
 
     def add_user(self, user : str, pswrd : str) -> int:
         data = {
-            'username': user,
-            'password': pswrd
+            'username': '{}'.format(user),
+            'password': '{}'.format(pswrd)
         }
 
-        doc_ref = self.db.collection('users').document(user).set(data)
+        doc_ref = self.db.collection('users').document(user)
+        doc_ref.set(data)
 
         return 0
     
     def check_user(self, user: str, pswrd: str = None) -> bool:
-        user = user.strip("/")  # Remove any trailing slashes if present
-        
         if(pswrd == None):
             doc_ref = self.db.collection('users').document(user)
             doc = doc_ref.get()
@@ -61,20 +57,6 @@ class FireStore():
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, user)
-    
-    def get_user_data(self, username : str):
-        """ Sorts through users in the database and returns the user with the given username"""
-        db_list = self.db.collection('users').stream()
-        for doc in db_list:
-            data = doc.to_dict()
-            if data.get('username') == username:
-                doc_id = doc.id
-                """Get dict of data from doc_id"""
-                data = self.db.collection('users').document(doc_id).get().to_dict()
-
-                """ Return dict of data """
-                return data
-        return None
 
     def password_strength(self, pswrd: str):
         strength = 0
@@ -83,34 +65,36 @@ class FireStore():
         if(len(pswrd) >= 8):
             strength += 1
         else:
-            msgs.append("Password must be a minimum of 8 characters ")
+            msgs.append("Password must be a minimum of 8 characters")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
-            msgs.append("Password must contain at least one uppercase letter ")
+            msgs.append("Password must contain at least one uppercase letter")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
-            msgs.append("Pasword must contain at least one number ")
+            msgs.append("Pasword must contain at least one number")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
-            msgs.append("Password must contain at least one special character (!,@,#).etc ")
+            msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
     
-    def save_user_data(self, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
+    def save_user_data(self, username: str, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
         try:
             data = {
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
                 'city': city,
                 'age': age,
                 'gender': gender
             }
+            
             self.db.collection('user_data').add(data)
             return True
         except Exception as e:
@@ -135,10 +119,20 @@ class FireStore():
                 'last_name': last_name,
                 'city': city,
                 'age': age,
-                'gender': gender
+                'gender': gender,
+                'interests': [""]
             }
             self.db.collection('user_data').document(doc_id).update(data)
             return True
         except Exception as e:
             print(f"Error updating data: {e}")
             return False
+    def update_interests(self, username: str, user_interests: list) -> bool:
+        if username:
+            doc_ref = self.db.collection('user_data').document(username)
+            doc_ref.update({'interests': user_interests})
+            return True
+        return False
+        
+    
+
