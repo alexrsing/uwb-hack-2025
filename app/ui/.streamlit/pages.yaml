@@ -1,7 +1,0 @@
-- path: pages/newUser.py
-  name: New User
-  icon: 🆕
-
-- path: pages/forgotPassword.py
-  name: Forgot Password
-  icon: 🔒
