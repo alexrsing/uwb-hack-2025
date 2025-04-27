@@ -80,6 +80,8 @@ def main():
                 else:
                     db.change_password(global_user, password)
                     st.success("Password successfully reset!")
+                    st.session_state.password_input = ""
+                    st.session_state.pwd_key = ""
                     st.session_state.reset_state = 1
                     st.switch_page('pages/dashboard.py')
 
