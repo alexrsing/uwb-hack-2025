@@ -1,5 +1,6 @@
 import streamlit as st
-from pages.storage import FireStore
+from storage import FireStore
+import time
 
 @st.cache_resource
 def get_db():
@@ -28,19 +29,21 @@ def main():
                     st.session_state.logged_in = True
                     st.session_state.login_failed = False
                     st.success("Logged in successfully!")
+                    time.sleep(1)
+                    st.switch_page('pages/dashboard.py')
+
                 else:
                     st.session_state.login_failed = True
 
         if st.session_state.login_failed:
             st.error("Login failed")
-            st.markdown("""<div style="background-color: #A8A8A8; padding: 20px; border-radius: 10px;">
-                        <p style="margin: 0; font-size: 18px;">
-                        New user? <a href="/pages/newUser.py" target="_self">Start here</a>
-                        </p>
-                        <p style="margin: 10px 0 0 0; font-size: 18px;">
-                        Forgot password? <a href="/pages/forgotPassword.py" target="_self">Recover here</a>
-                        </p>
-                        </div>""", unsafe_allow_html=True)
+            new_user = st.button("New user? Start here")
+            reset = st.button("Forgot password? Recover here")
+
+            if new_user:
+                st.switch_page('pages/newUser.py')
+            elif reset:
+                st.switch_page("pages/forgotPassword.py")
         st.markdown("---")
         st.caption("© 2025 (APPNAME) | All rights reserved")
         
