@@ -4,8 +4,8 @@ from storage import FireStore
 @st.cache_resource
 def get_db():
     return FireStore()
-    
-    
+
+
 def main():
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
