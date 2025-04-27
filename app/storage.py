@@ -3,6 +3,7 @@ import re
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import streamlit as st
 
 class FireStore():
     def __init__(self) -> None:
@@ -87,20 +88,24 @@ class FireStore():
             strength += 1
         else:
             msgs.append("Password must be a minimum of 8 characters")
+            msgs.append("Password must be a minimum of 8 characters")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
+            msgs.append("Password must contain at least one uppercase letter")
             msgs.append("Password must contain at least one uppercase letter")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
             msgs.append("Pasword must contain at least one number")
+            msgs.append("Pasword must contain at least one number")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
+            msgs.append("Password must contain at least one special character (!,@,#).etc")
             msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
