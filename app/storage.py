@@ -88,8 +88,6 @@ class FireStore():
 
         return strength, msgs
     
-<<<<<<< HEAD
-=======
     def save_user_data(self, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
         try:
             data = {
@@ -130,4 +128,3 @@ class FireStore():
         except Exception as e:
             print(f"Error updating data: {e}")
             return False
->>>>>>> 3458089fe81ccea62677ef9467402add867cd1e0
