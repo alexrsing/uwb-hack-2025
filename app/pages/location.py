@@ -3,14 +3,20 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import os
-from activity import Activity
+from models.activity import Activity
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
-cred = credentials.Certificate(service_account_path)
-firebase_admin.initialize_app(cred)
+
+if not firebase_admin._apps:
+            cred = credentials.Certificate(service_account_path)
+            firebase_admin.initialize_app(cred)
+else:
+    firebase_admin.delete_app(firebase_admin.get_app())
+    cred = credentials.Certificate(service_account_path)
+    firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
