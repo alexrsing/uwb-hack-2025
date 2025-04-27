@@ -53,7 +53,8 @@ class FireStore():
             }
             doc_ref.update(data)
             return True
-        except Exception:
+        except Exception as e:
+            print('Exception: ', {e})
             return False
 
     def valid_email(self, user: str) -> bool:
@@ -85,3 +86,4 @@ class FireStore():
             msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
+    
