@@ -1,8 +1,5 @@
 import streamlit as st
 
-from personal_info import PersonalPage
-
-
 class InterestPage:
     def __init__(self):
         # Initialize the user data dictionary with default values
@@ -44,17 +41,6 @@ class InterestPage:
 
             # Set interests to InterestPage object
             self.user_data = interest_list
-
-        # Button to go back to previous page (personal_info)
-        if st.button("Back to Personal Information"):
-            st.session_state.page = "personal_info"
-
-            # Reset what is being displayed
-            st.session_state.current_page = "personal_info"
-
-            personal_page = PersonalPage()
-            personal_page.run()
-
 
 def main():
     interest_page = InterestPage()

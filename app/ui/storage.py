@@ -3,8 +3,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-
-
 class FireStore():
     def __init__(self) -> None:
         if not firebase_admin._apps:
@@ -16,7 +14,6 @@ class FireStore():
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
-
 
     def add_user(self, user : str, pwrd : str) -> int:
         data = {
@@ -43,7 +40,6 @@ class FireStore():
                     return True
             return False
 
-
     def change_password(self, user: str, password: str) -> bool:
         try:
             doc_ref = self.db.collection('users').document(user)
@@ -55,13 +51,11 @@ class FireStore():
             return True
         except Exception:
             return False
-            
 
-    
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, user)
-    
+
     def password_strength(self, pswrd: str):
         strength = 0
         msgs = []
@@ -87,4 +81,3 @@ class FireStore():
             msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
-        
