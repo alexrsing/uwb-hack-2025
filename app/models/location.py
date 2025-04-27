@@ -3,6 +3,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import os
+from activity import Activity
 
 gmaps = googlemaps.Client(key="AIzaSyAnBNbRmAhKqDTL_JBNb8JgoUOqFMuskUI")
 
@@ -22,7 +23,7 @@ def convert_coordinates(location):
     
 # finds a list of places based on radius, specific location coordinates, and keyword (user's interests)
 def get_places_with_age(radius_miles, specific_lat, specified_lng, keyword, age):
-    
+
     if age:
         # convert age to keyword for appending
         age_keyword = f"{age} years old"
@@ -73,12 +74,6 @@ def search_and_upload_places(city, interests, radius, age):
                 for place in results['results']:
                     details = get_place_details(place['place_id'])
                     
-                    print(f"\nName: {details.get('name', 'N/A')}")
-                    print(f"Address: {details.get('formatted_address', 'N/A')}")
-                    print(f"Phone: {details.get('formatted_phone_number', 'N/A')}")
-                    print(f"Website: {details.get('website', 'N/A')}")
-                    print(f"Rating: {details.get('rating', 'N/A')} ({details.get('user_ratings_total', 0)} reviews)")
-                    
                     if 'opening_hours' in details:
                         status = "Open Now" if details['opening_hours'].get('open_now') else "Closed"
                         print(f"Status: {status}")
@@ -89,16 +84,17 @@ def search_and_upload_places(city, interests, radius, age):
                     
                     print("------")
                     
-                    # Create data dictionary
-                    data = {
-                        'name': details.get('name', 'N/A'),
-                        'address': details.get('formatted_address', 'N/A'),
-                        'phone': details.get('formatted_phone_number', 'N/A'),
-                        'website': details.get('website', 'N/A'),
-                        'rating': details.get('rating', 'N/A'),
-                        'user_ratings_total': details.get('user_ratings_total', 0),
-                        'opening_hours': details.get('opening_hours', {})
-                    }
+                    # convert place info into Activity object for easier parsing
+                    activity_object = Activity(details.get('name', 'N/A'),
+                                                details.get('formatted_address', 'N/A',
+                                                details.get('formatted_phone_number', 'N/A'),
+                                                details.get('website', 'N/A'),
+                                                details.get('rating', 'N/A')),
+                                                details.get('user_ratings_total', 0),
+                                                details.get('opening_hours', {}))
+                    
+                    # convert to dictionary to add to database
+                    data = activity_object.to_dict
                     
                     # Upload to Firestore
                     db.collection('places').add(data)
