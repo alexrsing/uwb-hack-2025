@@ -6,6 +6,9 @@ import time
 def get_db():
     return FireStore()
 
+
+global_user = st.session_state.get('global_user', 'User')
+
 def main():
     db = get_db()
     st.header("Reset your password: ")
