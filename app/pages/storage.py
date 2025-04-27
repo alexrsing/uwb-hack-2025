@@ -1,3 +1,4 @@
+import os
 import re
 import firebase_admin
 from firebase_admin import credentials
@@ -5,20 +6,23 @@ from firebase_admin import firestore
 
 class FireStore():
     def __init__(self) -> None:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
+
         if not firebase_admin._apps:
-            cred = credentials.Certificate('/Users/glasteroid/Desktop/uwb-hack-2025/app/models/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate('/Users/glasteroid/Desktop/uwb-hack-2025/app/models/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
 
-    def add_user(self, user : str, pwrd : str) -> int:
+    def add_user(self, user : str, pswrd : str) -> int:
         data = {
             'username': '{}'.format(user),
-            'password': '{}'.format(pwrd) 
+            'password': '{}'.format(pswrd)
         }
 
         doc_ref = self.db.collection('users').document(user)
