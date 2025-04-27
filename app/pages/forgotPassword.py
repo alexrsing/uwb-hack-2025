@@ -65,8 +65,8 @@ def main():
                     ">{strength_text[strength]}</div>
                     """, unsafe_allow_html=True)
             
-            # Show missing requirements if not strong
-                if strength < 3:  # Medium or below
+            
+                if strength < 3: 
                     st.caption("Missing requirements:")
                     for msg in msgs:
                         st.caption(msg)
