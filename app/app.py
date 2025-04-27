@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(initial_sidebar_state="collapsed")
+st.set_page_config(initial_sidebar_state="expanded")
 
 def main():
     st.title("Welcome to CommunaLink!")
@@ -11,6 +11,9 @@ def main():
     
     if login_clicked:
         st.switch_page("pages/login.py")
+        
+    if signup_clicked:
+        st.switch_page("pages/newUser.py")
         
 if __name__ == "__main__":
     main()

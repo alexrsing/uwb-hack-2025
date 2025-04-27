@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-from app.models.user import User
+from models.user import User
 
 # Initialize session state to store user data
 if 'user' not in st.session_state:
