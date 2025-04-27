@@ -7,15 +7,15 @@ import streamlit as st
 
 class FireStore():
     def __init__(self) -> None:
-        # base_dir = os.path.dirname(os.path.abspath(__file__))
-        # service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate('/Users/keshmuthu/uwb-hack-2025/app/ui/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
