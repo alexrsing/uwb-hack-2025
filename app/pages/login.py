@@ -43,6 +43,11 @@ def main():
                         </div>""", unsafe_allow_html=True)
         st.markdown("---")
         st.caption("© 2025 (APPNAME) | All rights reserved")
+        
+        # Back to homepage button
+        if st.button("Back to Homepage"):
+            st.session_state.logged_in = False  # Reset login state
+            st.switch_page("app")
 
 if __name__ == '__main__':
     main()
