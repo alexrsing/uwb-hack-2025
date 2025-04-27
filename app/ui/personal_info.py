@@ -1,97 +1,79 @@
 import streamlit as st
-import time
 
-
-def create_frame() -> dict:
-    # Footer
-    st.markdown("---")
-    st.caption("© 2025 (APPNAME) | All rights reserved")
-
-    #Set up background
-    st.markdown("""
-    <style>
-        .stExpander {
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin: 10px 0;
+class PersonalPage:
+    def __init__(self):
+        # Initialize the user data dictionary with default values
+        self.user_data = {
+            "name": "",
+            "location": "",
+            "age": 0,
+            "gender": ""
         }
-        .stMarkdown {
-            color: #4a4a4a;
-        }
-    </style>
-    """, unsafe_allow_html=True)
 
-    # Set Title Page
-    st.title("Personal Information Form")
-    st.write("Please fill in your details below:")
+    def run(self):
+        """
+        Displays the personal information form and collects user inputs.
+        Returns a dictionary with the user's information when submitted.
+        Returns None if the form hasn't been submitted yet.
+        """
 
-    # About this form
-    with st.expander("About This Form - Click to Expand", expanded=False):
-        st.write("""
-        - This form collects basic personal information
-        - Fields marked with * are required
-        - Your data will be stored securely
-        - For questions, contact us
-        """)
+        # Set up the page title and description
+        st.title("Personal Information")
+        st.write("Please fill out your profile details below")
 
-    # Create form style UI
-    with st.form("personal_form"):
-        #Set up input variables
-        name = st.text_input("Full Name*")
-        city = st.text_input("City*")
-        age = st.number_input("Age*", min_value=1, max_value=110)
-        gender = st.selectbox("Gender", ["Prefer not to say", "Male", "Female", "Non-binary"])
+        # Create input fields with appropriate input types
+        # Name input - text box for string
+        self.user_data["name"] = st.text_input("Name", value=self.user_data["name"])
 
-        #Submit button
-        submitted = st.form_submit_button("Submit")
+        # Location input - text box for string
+        self.user_data["location"] = st.text_input("Location", value=self.user_data["location"])
 
-        if submitted:
-            #Check if all required fields are filled
-            if not all([name, city, age, gender]):
-                st.error("Please fill in all required fields!")
+        # Age input - dropdown with integers 0-100
+        self.user_data["age"] = st.selectbox("Age", options=list(range(101)), index=self.user_data["age"])
 
-            else:
-                # Show spinner while processing
-                with st.spinner("Saving your data... Please wait..."):
-                    try:
-                        time.sleep(2)
+        # Gender input - radio buttons for multiple choice
+        gender_options = ["Male", "Female", "Rather not say"]
+        default_idx = gender_options.index(self.user_data["gender"]) if self.user_data[
+                                                                            "gender"] in gender_options else 0
+        self.user_data["gender"] = st.radio("Gender", options=gender_options, index=default_idx)
 
-                        # Return data as a dictionary
-                        data : dict = {'name': name, 'city': city, 'age': age, 'gender': gender}
+        # Create two columns for the buttons
+        col1, col2 = st.columns(2)
 
-                        # Success message
-                        st.success("Thank you for your submission! Your data has been saved.")
+        # Submit button in the first column
+        with col1:
+            if st.button("Save Information"):
+                # Validate that required fields are filled
+                if not self.user_data["name"] or not self.user_data["location"]:
+                    st.error("Please fill out all required fields.")
+                    return None
 
-                    except Exception as e:
-                        # Error message
-                        st.error(f"An error occurred: {str(e)}")
+                # Display success message
+                st.success(f"Profile saved for {self.user_data['name']}!")
 
-    # expander for privacy policy
-    with st.expander("Privacy Policy - Click to Expand", expanded=False):
-        st.write("""
-        **How we use your data:**
-        - For internal analytics only
-        - Never shared with third parties
-        - Stored securely on our servers
+                # Return the collected data for the driver class to use
+                return self.user_data.copy()
 
-        **Your rights:**
-        - You can request deletion anytime
-        - Contact us for inquiries
-        """)
+        # Quit button in the second column
+        with col2:
+            if st.button("Quit Application"):
+                st.write("Shutting down application...")
+                # This will terminate the Python process completely
+                st.stop()
 
-    # Footer
-    st.markdown("---")
-    st.caption("© 2025 (APPNAME) | All rights reserved")
+        # Return None if the form hasn't been submitted yet
+        return None
 
-    # Footer
-    st.markdown("---")
-    st.caption("© 2025 (APPNAME) | All rights reserved")
+# Example usage when running the file directly
+if __name__ == "__main__":
+    # Add a description of how to terminate for developers
+    st.sidebar.write("### Developer Notes")
+    st.sidebar.write("- Use the 'Quit Application' button to stop the app")
+    st.sidebar.write("- Or press Ctrl+C in the terminal")
 
-    return data
+    personal_page = PersonalPage()
+    result = personal_page.run()
 
-def run():
-    # Set up the main frame
-    data = create_frame()
-
-    # Return the collected data
-    return data
+    # Display returned data on screen
+    if result:
+        st.write("Returned data:", result)
