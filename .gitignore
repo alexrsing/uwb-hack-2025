@@ -1,4 +1,5 @@
 .idea/
 .secrets/
 .venv/
-app/ui/key.json
+.iml
+.xml
