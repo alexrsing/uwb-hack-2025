@@ -18,7 +18,6 @@ def main():
             db.change_password(username, password)
         else:
             st.error('Passwords must match!')
-    
  
 if __name__ == '__main__':
     main()
