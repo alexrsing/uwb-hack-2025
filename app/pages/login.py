@@ -29,8 +29,8 @@ def main():
                     st.session_state.logged_in = True
                     st.session_state.login_failed = False
                     st.success("Logged in successfully!")
-                    time.sleep(5)
-                    st.switch_page('pages/personal_data.py')
+                    time.sleep(1)
+                    st.switch_page('pages/personal_page.py')
 
                 else:
                     st.session_state.login_failed = True

@@ -23,17 +23,16 @@ class FireStore():
 
     def add_user(self, user : str, pswrd : str) -> int:
         data = {
-            'username': user,
-            'password': pswrd
+            'username': '{}'.format(user),
+            'password': '{}'.format(pswrd)
         }
 
-        doc_ref = self.db.collection('users').document(user).set(data)
+        doc_ref = self.db.collection('users').document(user)
+        doc_ref.set(data)
 
         return 0
     
     def check_user(self, user: str, pswrd: str = None) -> bool:
-        user = user.strip("/")  # Remove any trailing slashes if present
-        
         if(pswrd == None):
             doc_ref = self.db.collection('users').document(user)
             doc = doc_ref.get()
@@ -47,22 +46,23 @@ class FireStore():
                     return True
             return False
 
-    def change_password(self, user: str, password: str) -> bool:
-        try:
-            doc_ref = self.db.collection('users').document(user)
-            data = {
-                'username': user,
-                'password': password
-            }
-            doc_ref.update(data)
-            return True
-        except Exception as e:
-            print('Exception: ', {e})
-            return False
+    def change_password(self, username: str, password: str) -> bool:
+        dict = {'password': password}
+        successful : bool = self.save_user_data(username, dict)
+        return successful
 
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, user)
+
+    def save_user_data(self, username : str, data : dict) -> bool:
+        try:
+            doc_ref = self.db.collection('users').document(username)               
+            doc_ref.set(data, merge=True)  # Use merge=True to update existing fields and add new ones
+            return True
+        except Exception as e:
+            print(f"Error saving data: {e}")
+            return False
 
     def password_strength(self, pswrd: str):
         strength = 0
@@ -71,76 +71,21 @@ class FireStore():
         if(len(pswrd) >= 8):
             strength += 1
         else:
-            msgs.append("Password must be a minimum of 8 characters, ")
+            msgs.append("Password must be a minimum of 8 characters")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
-            msgs.append("Password must contain at least one uppercase letter, ")
+            msgs.append("Password must contain at least one uppercase letter")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
-            msgs.append("Pasword must contain at least one number, ")
+            msgs.append("Pasword must contain at least one number")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
-            msgs.append("Password must contain at least one special character (!,@,#).etc, ")
+            msgs.append("Password must contain at least one special character (!,@,#).etc")
 
         return strength, msgs
-    
-    def save_user_data(self, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
-        try:
-            data = {
-                'first_name': first_name,
-                'last_name': last_name,
-                'city': city,
-                'age': age,
-                'gender': gender
-            }
-            self.db.collection('users').add(data)
-            return True
-        except Exception as e:
-            print(f"Error saving data: {e}")
-            return False
-        
-    def get_user_data(self, username : str):
-        """ Sorts through users in the database and returns the user with the given username"""
-        db_list = self.db.collection('users').stream()
-        for doc in db_list:
-            data = doc.to_dict()
-            if data.get('username') == username:
-                doc_id = doc.id
-                """Get dict of data from doc_id"""
-                data = self.db.collection('users').document(doc_id).get().to_dict()
-
-                interests = data.get('interests')
-                return data
-        return None, None
-
-    def get_first_user_data(self):
-        try:
-            docs = self.db.collection('users').limit(1).stream()
-            for doc in docs:
-                data = doc.to_dict()
-                return doc.id, data
-            return None, None
-        except Exception as e:
-            print(f"Error getting data: {e}")
-            return None, None
-
-    def update_user_data(self, doc_id: str, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
-        try:
-            data = {
-                'first_name': first_name,
-                'last_name': last_name,
-                'city': city,
-                'age': age,
-                'gender': gender
-            }
-            self.db.collection('user_data').document(doc_id).update(data)
-            return True
-        except Exception as e:
-            print(f"Error updating data: {e}")
-            return False

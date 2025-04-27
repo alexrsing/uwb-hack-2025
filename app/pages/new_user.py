@@ -1,9 +1,7 @@
 import streamlit as st
 from storage import FireStore
 
-@st.cache_resource
 def get_db():
-    """Establish a connection with Firestore."""
     return FireStore()
 
 def main():
@@ -21,14 +19,17 @@ def main():
         else:
             # Check if the username already exists
             if db.check_user(username):
-                st.error("Username already exists. Please choose a different one.")
+                st.error(f"The username {username} already exists. Please choose a different one.")
+                
+            strength, msgs_list = db.password_strength(password)
+            
+            if strength != 4 or msgs_list != []:
+                st.error(f"Your password strength is {strength}, and you are missing the following: " + ", ".join(msgs_list))
             else:
                 # Create a new user in the database
                 db.add_user(username, password)
                 st.success(f"Account created successfully for {username}!")
-                st.switch_page("pages/personal_info.py")
-
-
+                st.switch_page("pages/personal_page.py")
 
 if __name__ == "__main__":
     main()
