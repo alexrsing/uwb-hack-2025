@@ -11,9 +11,12 @@ def main():
         st.session_state.logged_in = False
     if 'login_failed' not in st.session_state:
         st.session_state.login_failed = False
+    if 'global_user' not in st.session_state:
+        st.session_state.global_user = ""
 
     db = get_db()
 
+   
     if st.session_state.logged_in:
         st.success("Welcome back!")
     else:
@@ -28,6 +31,7 @@ def main():
                     st.session_state.logged_in = True
                     st.session_state.login_failed = False
                     st.success("Logged in successfully!")
+                    st.session_state.global_user = username
                     time.sleep(1)
                     st.switch_page('pages/dashboard.py')
 
