@@ -10,9 +10,10 @@ class FirestorePersonalData:
 
         self.db = firestore.client()
 
-    def save_user_data(self, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
+    def save_user_data(self, username: str, first_name: str, last_name: str, city: str, age: int, gender: str) -> bool:
         try:
             data = {
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
                 'city': city,

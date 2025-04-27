@@ -7,11 +7,12 @@ from storage import FireStore  # make sure your filename matches
 def get_db():
     return FireStore()
 
+global_user = st.session_state.get('global_user', 'User')
 # Set up background style
 st.markdown("""
 <style>
     .stExpander {
-        background: #f8f9fa;
+        background: transparent;
         border-radius: 8px;
         margin: 10px 0;
     }
@@ -21,12 +22,17 @@ st.markdown("""
     .sidebar .sidebar-content {
             display: none;
     }
+    .stExpanderContent * {
+        color: white !important;
+    }
+ 
 </style>
 """, unsafe_allow_html=True)
 
 # Set Title Page
-st.title("Personal Information Form")
+st.title(f"{global_user}, let's get to know you a bit more! 🎈")
 st.write("Please fill in your details below:")
+
 
 # About this form
 with st.expander("About This Form - Click to Expand", expanded=False):
@@ -54,9 +60,10 @@ with st.form("personal_form"):
             db = get_db()
             with st.spinner("Saving your data... Please wait..."):
                 time.sleep(2)
-                success = db.save_user_data(first_name, last_name, city, int(age), gender)
+                success = db.save_user_data(global_user, first_name, last_name, city, int(age), gender)
                 if success:
                     st.success("Thank you for your submission! Your data has been saved.")
+                    st.switch_page('pages/dashboard.py')
                 else:
                     st.error("An error occurred while saving your data.")
 

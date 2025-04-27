@@ -7,7 +7,11 @@ from firebase_admin import firestore
 class FireStore():
     def __init__(self) -> None:
         base_dir = os.path.dirname(os.path.abspath(__file__))
+<<<<<<< HEAD
         service_account_path = os.path.join(base_dir, '../.secrets/serviceAccountKey.json')
+=======
+        service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
+>>>>>>> 7fd3ea3af45b1afe873b042e70687be310087042
 
         if not firebase_admin._apps:
             cred = credentials.Certificate(service_account_path)
@@ -83,22 +87,22 @@ class FireStore():
         if(len(pswrd) >= 8):
             strength += 1
         else:
-            msgs.append("Password must be a minimum of 8 characters, ")
+            msgs.append("Password must be a minimum of 8 characters ")
 
         if(re.search(r'[A-Z]', pswrd)):
             strength += 1
         else: 
-            msgs.append("Password must contain at least one uppercase letter, ")
+            msgs.append("Password must contain at least one uppercase letter ")
 
         if(re.search(r'[0-9]', pswrd)):
             strength += 1
         else:
-            msgs.append("Pasword must contain at least one number, ")
+            msgs.append("Pasword must contain at least one number ")
         
         if(re.search(r'[!@#$%^&*(),.?\":{}|<>]', pswrd)):
             strength += 1
         else:
-            msgs.append("Password must contain at least one special character (!,@,#).etc, ")
+            msgs.append("Password must contain at least one special character (!,@,#).etc ")
 
         return strength, msgs
     
