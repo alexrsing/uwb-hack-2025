@@ -13,9 +13,11 @@ class FireStore():
 
         if not firebase_admin._apps:
             cred = credentials.Certificate(service_account_path)
+            cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
+            cred = credentials.Certificate(service_account_path)
             cred = credentials.Certificate(service_account_path)
             firebase_admin.initialize_app(cred)
 

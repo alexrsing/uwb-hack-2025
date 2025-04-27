@@ -49,7 +49,6 @@ def main():
             if st.session_state.password_input:
                 strength, msgs = db.password_strength(password)
             
-            # Visual strength indicator
                 colors = ["red", "orange", "yellow", "lightgreen", "green"]
                 strength_text = ["Very Weak", "Weak", "Medium", "Strong", "Very Strong"]
                 progress = strength / 4
@@ -73,18 +72,25 @@ def main():
                         st.caption(msg)
             cnf_password = st.text_input("Confirm new password: ", type='password', placeholder='example@123')
             reset_submitted = st.form_submit_button('Reset password')
+            strength, msgs = db.password_strength(password)
             if reset_submitted:
                 if not password or not cnf_password:
                     st.error('Both fields are required')
-                elif(password != cnf_password):
-                    st.warning('Passwords must match!')
-                else:
+                elif(strength >= 8):
                     db.change_password(global_user, password)
                     st.success("Password successfully reset!")
                     st.session_state.password_input = ""
                     st.session_state.pwd_key = ""
                     st.session_state.reset_state = 1
                     st.switch_page('pages/dashboard.py')
+
+                elif(password != cnf_password):
+                    st.warning('Passwords must match!')
+                else:
+                    for msg in msgs:
+                        st.error(msg)
+
+
 
     st.markdown("---")
     st.caption("© 2025 (APPNAME) | All rights reserved")
