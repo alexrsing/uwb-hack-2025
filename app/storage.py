@@ -22,17 +22,6 @@ class FireStore():
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
-
-    def add_user(self, user : str, pswrd : str) -> int:
-        data = {
-            'username': '{}'.format(user),
-            'password': '{}'.format(pswrd)
-        }
-
-        doc_ref = self.db.collection('users').document(user)
-        doc_ref.set(data)
-
-        return 0
     
     def check_user(self, user: str, pswrd: str = None) -> bool:
         if(pswrd == None):
@@ -56,15 +45,39 @@ class FireStore():
     def valid_email(self, user: str) -> bool:
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, user)
+    
+    def save_user(self, username: str, password: str) -> bool:
+        try:
+            doc_ref = self.db.collection('users').document(username)
+            doc_ref.set({
+                'username': username,
+                'password': password
+            }, merge=True)
+            return True
+        except Exception as e:
+            print(f"Error saving user: {e}")
+            return False
 
     def save_user_data(self, username : str, data : dict) -> bool:
         try:
-            doc_ref = self.db.collection('users').document(username)               
+            doc_ref = self.db.collection('user_data').document(username)               
             doc_ref.set(data, merge=True)  # Use merge=True to update existing fields and add new ones
             return True
         except Exception as e:
             print(f"Error saving data: {e}")
             return False
+        
+    def get_by_user(self, username: str) -> dict:
+        try:
+            doc_ref = self.db.collection('user_data').document(username)
+            doc = doc_ref.get().limit(1)
+            if doc.exists:
+                return doc.to_dict()
+            else:
+                return {}
+        except Exception as e:
+            print(f"Error retrieving data: {e}")
+            return {}
 
     def password_strength(self, pswrd: str):
         strength = 0

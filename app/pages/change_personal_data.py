@@ -1,11 +1,11 @@
 import streamlit as st
 import time
-
 from storage import FireStore  # make sure your filename matches
 
 # Initialize Firestore
 @st.cache_resource
 def get_db():
+    """Establish a connection with Firestore."""
     return FireStore()
 
 def main():
@@ -13,8 +13,15 @@ def main():
 
     db = get_db()
 
+    global_user = st.session_state.get("global_user", "User")
+    if 'username' not in st.session_state:
+        st.session_state.username = global_user
+
     # Try to get existing data
-    doc_id, existing_data = db.get_first_user_data()
+    existing_data : dict = db.get_by_user(global_user)
+    if existing_data is None:
+        st.warning("No user data found.")
+        return
 
     if existing_data is None:
         st.warning("No user data found.")
@@ -30,6 +37,7 @@ def main():
         age = st.number_input("Age*", min_value=1, max_value=110, value=existing_data.get("age", 18))
         gender = st.selectbox("Gender", ["Prefer not to say", "Male", "Female", "Non-binary"],
                               index=["Prefer not to say", "Male", "Female", "Non-binary"].index(existing_data.get("gender", "Prefer not to say")))
+        interests : list = st.text_input("Interests", value=", ".join(existing_data.get("interests", []))).split(", ")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -43,10 +51,11 @@ def main():
         else:
             with st.spinner("Updating your data... Please wait..."):
                 time.sleep(2)
-                success = db.update_user_data(doc_id, first_name, last_name, city, int(age), gender)
+                data : dict = {'first_name': first_name, 'last_name': last_name, 'city': city, 'age': age, 'gender' : gender, 'interets' : interests}
+                success = db.save_user_data(global_user, data)
                 if success:
                     st.success("Your information has been updated successfully!")
-                    st.switch_page("pages/personal_account/interest_page.py")
+                    st.switch_page("pages/dashboard.py")
                 else:
                     st.error("Failed to update your information.")
 

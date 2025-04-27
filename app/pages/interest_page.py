@@ -9,12 +9,16 @@ def get_db():
 def main():
     db = get_db()
 
+    global_user = st.session_state.get("global_user", "User")
+    if 'username' not in st.session_state:
+        st.session_state.username = global_user
+
     # Set up the page title and description
     st.title("Interests")
 
     st.subheader("What are you interested in?")
-    interests: str = st.text_input("Enter interests here: ")
     st.write("Please separate each interest with a comma (e.g., hiking, reading, cooking).")
+    interests : list = st.text_input("Interests").split(", ")
 
     # Create a submit button
     if st.button("Submit"):
@@ -24,18 +28,17 @@ def main():
             return None
 
         # Split the input string into a list of interests
-        interest_list = [interest.strip() for interest in interests.split(",")]
 
         # Display success message
-        st.success(f"Interests saved: {', '.join(interest_list)}!")
+        st.success(f"Interests saved: {', '.join(interests)}!")
 
         # Set interests to InterestPage object
-        user_data = interest_list
+        data : dict = {'interests': interests}
 
-        username = st.session_state.username
-        # Update database
-        db.update_user(username, {'interests': user_data})
+        # Save to Firestore
+        db.save_user_data(global_user, data)
 
+        st.switch_page("pages/dashboard.py")
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ def main():
         st.switch_page("pages/login.py")
         
     if signup_clicked:
-        st.switch_page("pages/newUser.py")
+        st.switch_page("pages/create_account.py")
         
 if __name__ == "__main__":
     main()

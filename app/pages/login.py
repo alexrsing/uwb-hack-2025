@@ -15,7 +15,6 @@ def main():
         st.session_state.global_user = ""
 
     db = get_db()
-
    
     if st.session_state.logged_in:
         st.success("Welcome back!")
@@ -33,7 +32,7 @@ def main():
                     st.success("Logged in successfully!")
                     st.session_state.global_user = username
                     time.sleep(1)
-                    st.switch_page('pages/personal_page.py')
+                    st.switch_page('pages/dashboard.py')
 
                 else:
                     st.session_state.login_failed = True

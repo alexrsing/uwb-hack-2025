@@ -7,6 +7,10 @@ def get_db():
     return FireStore()
 
 def main():
+    global_user = st.session_state.get("global_user", "User")
+    if 'username' not in st.session_state:
+        st.session_state.username = global_user
+    
     db = get_db()
     st.title("Personal Information")
     st.write("Please fill out your profile details below")
@@ -35,16 +39,17 @@ def main():
                 st.error("Please fill out all required fields.")
             else:
                 # Display success message
-                st.success(f"Profile saved for {name}!")
+                # st.success(f"Profile saved for {name}!")
 
                 # Update database
-                username = st.session_state.username
-                db.update(username, data)
+                if db.save_user_data(global_user, data):
+                    st.success("User data saved successfully!")
+                    st.switch_page("pages/interest_page.py")
+
     with col2:
         if st.button("Exit"):
             st.write("Exiting")
             st.stop()
-
 
 # Example usage when running the file directly
 if __name__ == "__main__":
