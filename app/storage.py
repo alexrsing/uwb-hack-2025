@@ -6,15 +6,15 @@ from firebase_admin import firestore
 
 class FireStore():
     def __init__(self) -> None:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        service_account_path = os.path.join(base_dir, '../../.secrets/serviceAccountKey.json')
+        # base_dir = os.path.dirname(os.path.abspath(__file__))
+        # service_account_path = os.path.join(base_dir, 'app/ui/serviceAccountKey.json')
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate(service_account_path)
+            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
             firebase_admin.initialize_app(cred)
         else:
             firebase_admin.delete_app(firebase_admin.get_app())
-            cred = credentials.Certificate(service_account_path)
+            cred = credentials.Certificate('app/ui/serviceAccountKey.json')
             firebase_admin.initialize_app(cred)
 
         self.db = firestore.client()
