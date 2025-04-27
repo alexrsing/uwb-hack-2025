@@ -6,9 +6,10 @@ def main():
     st.title("Welcome to CommunaLink!")
     st.write("This is the homepage. Click the button below to login, or if you are a new user, create an account.")
     
-    continue_clicked = st.button("Continue to login", key="continue_login_button")
+    login_clicked = st.button("Already a user? Log in here.", key="login_button")
+    signup_clicked = st.button("First time? Sign up here.", key="signup_button")
     
-    if continue_clicked:
+    if login_clicked:
         st.switch_page("pages/login.py")
         
 if __name__ == "__main__":
